@@ -188,6 +188,18 @@ export class ParsingComponents implements ParsedComponents {
             this.imply("second", date.getSeconds());
             this.imply("minute", date.getMinutes());
             this.imply("hour", date.getHours());
+            // The added time may roll over the day (e.g. 11pm + 2 hours => 1am next day).
+            if (
+                date.getDate() !== currentDate.getDate() ||
+                date.getMonth() !== currentDate.getMonth() ||
+                date.getFullYear() !== currentDate.getFullYear()
+            ) {
+                this.delete(["day", "weekday", "month", "year"]);
+                this.imply("day", date.getDate());
+                this.imply("weekday", date.getDay());
+                this.imply("month", date.getMonth() + 1);
+                this.imply("year", date.getFullYear());
+            }
         }
         return this;
     }

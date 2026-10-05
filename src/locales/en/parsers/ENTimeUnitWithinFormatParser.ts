@@ -42,6 +42,13 @@ export default class ENTimeUnitWithinFormatParser extends AbstractParserWithWord
         if (!timeUnits) {
             return null;
         }
-        return ParsingComponents.createRelativeFromReference(context.reference, timeUnits);
+        const components = ParsingComponents.createRelativeFromReference(context.reference, timeUnits);
+
+        // A "for <duration>" phrase can describe how long an event lasts (e.g. "tomorrow at 3pm for 2 hours"),
+        // whereas "within/in <duration>" always means a relative date from now.
+        if (/^\s*for\b/.test(match[0])) {
+            components.addTag("result/forDuration");
+        }
+        return components;
     }
 }

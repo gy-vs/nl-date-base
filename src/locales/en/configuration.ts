@@ -25,6 +25,7 @@ import ENMergeRelativeFollowByDateRefiner from "./refiners/ENMergeRelativeFollow
 import OverlapRemovalRefiner from "../../common/refiners/OverlapRemovalRefiner";
 import ENExtractYearSuffixRefiner from "./refiners/ENExtractYearSuffixRefiner";
 import ENUnlikelyFormatFilter from "./refiners/ENUnlikelyFormatFilter";
+import ENMergeDateWithDurationRefiner from "./refiners/ENMergeDateWithDurationRefiner";
 
 export default class ENDefaultConfiguration {
     /**
@@ -78,6 +79,10 @@ export default class ENDefaultConfiguration {
 
         // Extract year after merging date and time
         options.refiners.push(new ENExtractYearSuffixRefiner());
+
+        // Merge "for <duration>" after ForwardDateRefiner (added by the common configuration)
+        // so that, with forwardDate, the end follows the shifted start while keeping the duration.
+        options.refiners.push(new ENMergeDateWithDurationRefiner());
 
         // Keep the date range refiner at the end (after all other refinements).
         options.refiners.push(new ENMergeDateRangeRefiner());
