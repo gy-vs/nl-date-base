@@ -22,6 +22,7 @@ import SlashDateFormatParser from "../../common/parsers/SlashDateFormatParser";
 import ENTimeUnitCasualRelativeFormatParser from "./parsers/ENTimeUnitCasualRelativeFormatParser";
 import ENMergeRelativeAfterDateRefiner from "./refiners/ENMergeRelativeAfterDateRefiner";
 import ENMergeRelativeFollowByDateRefiner from "./refiners/ENMergeRelativeFollowByDateRefiner";
+import ENMergeDateAndDurationRefiner from "./refiners/ENMergeDateAndDurationRefiner";
 import OverlapRemovalRefiner from "../../common/refiners/OverlapRemovalRefiner";
 import ENExtractYearSuffixRefiner from "./refiners/ENExtractYearSuffixRefiner";
 import ENUnlikelyFormatFilter from "./refiners/ENUnlikelyFormatFilter";
@@ -81,6 +82,11 @@ export default class ENDefaultConfiguration {
 
         // Keep the date range refiner at the end (after all other refinements).
         options.refiners.push(new ENMergeDateRangeRefiner());
+
+        // Merge a date/time followed by a duration (e.g. "... for 2 hours") into a date range.
+        // This is done last, when the start date/time is final (e.g. after timezone extraction
+        // and forward-date adjustment), so the end can be shifted from it by the duration.
+        options.refiners.push(new ENMergeDateAndDurationRefiner());
         return options;
     }
 }
